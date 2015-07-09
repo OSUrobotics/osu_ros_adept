@@ -1,5 +1,0 @@
-string grasp_direction
-float32 spread
-bool get_joint_vals
----
-float32[] vals

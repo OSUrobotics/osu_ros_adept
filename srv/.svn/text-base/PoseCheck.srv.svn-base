@@ -1,7 +1,0 @@
-geometry_msgs/Pose pose
-float32 spread
-bool move
-bool get_norm
----
-bool valid
-float32[3] norm
