@@ -1,0 +1,253 @@
+#!/usr/bin/env python
+
+import rospy
+import sys, time, math, struct
+from numpy import *
+from osu_ros_adept.srv import *
+
+angle_msg = 1
+xyz_msg = 2
+speed_msg = 11
+accel_msg = 12
+tool_msg = 21
+
+num_cmd_params = 5 #Only change if ros.srv.cmd() in adept controller is changed
+size = 1024
+
+
+#Function to send commands that change joint values to the client node
+def send_command(params, joints):
+ 	
+	rospy.wait_for_service('send_robot_movements')
+	try:
+		#try to send command to the specified node
+		send_cmd = rospy.ServiceProxy('send_robot_movements', robot_movement_command)
+		temp = []
+		for i in range(6):
+			temp.append(joints[i])
+		#send the correct parameters and the joints array using send_cmd
+		length = send_cmd(params[0], params[1], params[2], params[3], params[4], temp)
+		print str(length) + " bytes sent"
+
+	except rospy.ServiceException, e:
+		print "Service call failed: %s"%e
+
+		
+#Function to send commands to the client node, this is different than the send_command function because
+#the values for speed/accel/etc are already built into the cmd (params parameter) as the "Message Command"
+def send_parameters(params):
+
+	rospy.wait_for_service('send_robot_parameters')
+	try:
+		#try to send command to the specified node
+		send_cmd = rospy.ServiceProxy('send_robot_parameters', robot_parameters_command)
+		length = send_cmd(params[0], params[1], params[2], params[3], params[4])
+		
+		print str(length) + " bytes sent"
+
+	except rospy.ServiceException, e:
+		print "Service call failed: %s"%e
+
+
+#This function is for user specification of joint positions. It defines limits for each joint that should
+#not be exceeded as the joint either isn't meant to move outside of those values, or moving it outside
+#of the defined values will cause the arm to hit the table.
+def user_get_xyz(last):
+
+		pos = []
+		for i in range(6):
+			#Raw_input used to get a position value from user in terminal
+			position = raw_input('XYZ, rpy coord: ')
+			if position == "":
+				position = last[i]
+			elif i == 0:
+				#checks to make sure joint0 is within an accessible range, if not, it sets position to 0.
+				if(float(position) > 650 or float(position) < -650):
+					print "Joint position is out of range. (-2.96 - 2.96) Setting to 0"
+					position = 0
+			elif i == 1:
+				#checks to make sure joint1 is within an accessible range, if not, it sets position to 0.
+				if(float(position) > 650 or float(position) < -650):
+					print "Joint position is out of range. (-3.32 - 0.79) Setting to 0"
+					position = 0
+			elif i == 2:
+				#checks to make sure joint2 is within an accessible range, if not, it sets position to 25.
+				if(float(position) > 900 or float(position) < 25):
+					print "Joint position is out of range. (25 - 580) Setting to 0"
+					position = 25
+			elif i == 3:
+				#checks to make sure joint3 is within an accessible range, if not, it sets position to 0.
+				if(float(position) > 180 or float(position) < -180):
+					print "Joint position is out of range. (-3.31 - 3.31) Setting to 0"
+					position = 0
+			elif i == 4:
+				#checks to make sure joint4 is within an accessible range, if not, it sets position to 0.
+				if(float(position) > 180 or float(position) < -180):
+					print "Joint position is out of range. (-2.08 - 2.2.08) Setting to 0"
+					position = 0
+			elif i == 5:
+				#checks to make sure joint5 is within an accessible range, if not, it sets position to 0.
+				if(float(position) > 180 or float(position) < -180):
+					print "Joint position is out of range. (-2*pi - 2*pi) Setting to 0"
+					position = 0
+
+			#Once the value is checked and "approved" or fixed, it is added to the list
+			pos.append(position)
+		last = pos
+		
+		# Single precision float is needed for the Adept Controller.
+		# If wanted, ros.v2 files could be changed to accept doubles instead
+		f_angles = array(pos, dtype=float32)
+
+		cmd = []
+		cmd.append(60)  #Message Length
+		cmd.append(xyz_msg)  #Message Type
+		cmd.append(0)  #Message Command
+		cmd.append(0)  #Message Reply 
+		cmd.append(0)  #Discard bytes
+			
+		#Sends command using cmd, to define the command, and f_angles to send the desired joint positions
+		send_command(cmd, f_angles)
+		
+		return last
+
+
+#This function is for user specification of joint angles. It defines limits for each joint that should
+#not be exceeded as the joint either isn't meant to move outside of those values, or moving it outside
+#of the defined values will cause the arm to hit the table. This is very similar to the user_get_xyz, 
+#except it uses a different 
+def user_get_angles(last):
+
+		pos = []
+		for i in range(6):
+			#Raw_input used to get a position value from user in terminal
+			position = raw_input('Joint ' + str(i+1) + ': ')
+			if position == "":
+				position = last[i]
+			elif i == 0:
+				#checks to make sure joint0 is within an accessible range, if not, it sets position to 0.
+				if(float(position) > 2.96 or float(position) < -2.96):
+					print "Joint position is out of range. (-2.96 - 2.96) Setting to 0"
+					position = 0
+			elif i == 1:
+				#checks to make sure joint1 is within an accessible range, if not, it sets position to 0.
+				if(float(position) > 0.78 or float(position) < -3.31):
+					print "Joint position is out of range. (-3.32 - 0.79) Setting to 0"
+					position = 0
+			elif i == 2:
+				#checks to make sure joint2 is within an accessible range, if not, it sets position to 0.
+				if(float(position) > 4.46 or float(position) < -0.50):
+					print "Joint position is out of range. (-0.50 - 4.46) Setting to 0"
+					position = 0
+			elif i == 3:
+				#checks to make sure joint3 is within an accessible range, if not, it sets position to 0.
+				if(float(position) > 3.31 or float(position) < -3.31):
+					print "Joint position is out of range. (-3.31 - 3.31) Setting to 0"
+					position = 0
+			elif i == 4:
+				#checks to make sure joint4 is within an accessible range, if not, it sets position to 0.
+				if(float(position) > 2.08 or float(position) < -2.08):
+					print "Joint position is out of range. (-2.08 - 2.2.08) Setting to 0"
+					position = 0
+			elif i == 5:
+				#checks to make sure joint5 is within an accessible range, if not, it sets position to 0.
+				if(float(position) > 2 * math.pi or float(position) < -2 * math.pi):
+					print "Joint position is out of range. (-2*pi - 2*pi) Setting to 0"
+					position = 0
+
+			#Once the value is checked and "approved" or fixed, it is added to the list
+			pos.append(position)
+		last = pos
+		
+		#Creates array of the pos values of type float32
+		f_angles = array(pos, dtype=float32)
+
+		cmd = []
+		cmd.append(60)  #Message Length
+		cmd.append(angle_msg)  #Message Type
+		cmd.append(0)  #Message Command
+		cmd.append(0)  #Message Reply 
+		cmd.append(0)  #Discard bytes
+
+		#Sends command, specified by cmd, and the correct angles to send_command
+		send_command(cmd, f_angles)
+		
+		return last
+	
+	
+#Function to manually set the speed of the robot.
+def set_speed(spd):
+	
+	cmd = []
+	cmd.append(20)  #Message Length
+	cmd.append(speed_msg)  #Message Type
+	cmd.append(spd)  #Message Command
+	cmd.append(0)  #Message Reply 
+	cmd.append(0)  #Discard bytes
+
+	send_parameters(cmd)
+
+#Function to manually set the acceleration of the robot.
+def set_accel(accel):
+	
+	cmd = []
+	cmd.append(20)  #Message Length
+	cmd.append(accel_msg)  #Message Type
+	cmd.append(accel)  #Message Command
+	cmd.append(0)  #Message Reply 
+	cmd.append(0)  #Discard bytes
+	
+	send_parameters(cmd)
+
+#Function to manually set the end effector length for an attachment to the robot.
+def set_effector(effector):
+	
+	cmd = []
+	cmd.append(20)  #Message Length
+	cmd.append(tool_msg)  #Message Type
+	cmd.append(effector)  #Message Command
+	cmd.append(0)  #Message Reply 
+	cmd.append(0)  #Discard bytes
+
+	send_parameters(cmd)
+
+	
+#Function to help define how to manually set different aspects of the robot, such as speed, xyz positions,
+#joint angles, acceleration, and end effector length.
+def manual_entry_mode():
+
+	option = ""
+	#Defines last positions to begin with
+	last = [0,0,0,0,0,0]
+	last_xyz = [255,0,710,0,0,0]
+	#loops until user specifies to exit, allows users to manually set different variables continuously
+	while option != "exit":	
+		option = raw_input('Enter Command, transformation, Set speed, Set acceleration or set end effector? <c | t | s | a | e>: ')
+		if(option == "s"):
+			#"s" is to set the speed
+			spd = int(raw_input('Enter Speed: '))
+			set_speed(spd)
+		elif(option == "t"):
+			#t is to set the xyz positions
+			last_xyz = user_get_xyz(last_xyz)
+		elif(option == "c"):
+			#c is to set the joint angles
+			last = user_get_angles(last)
+		elif(option == "a"):
+			#a is to set the acceleration
+			accel = int(raw_input('Enter Acceleration: '))
+			set_accel(accel)
+		elif(option == "e"):
+			#e is to set the end effector length (such as an attached hand, etc.)
+			effector_length = int(raw_input('Enter End Effector Length: '))
+			set_effector(effector_length)
+
+#Function starts the manual entry process, by initializing the client node and then starting the options loop
+def main():
+
+	rospy.init_node("manual_entry_client")	
+  	manual_entry_mode()
+	
+
+if __name__ == "__main__":
+	main()

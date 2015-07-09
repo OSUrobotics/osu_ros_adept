@@ -1,0 +1,20 @@
+<launch>
+
+  <node name="RAVE_ADEPT" pkg="osu_ros_adept" type="RAVE_ADEPT.py" respawn="false" required="true" args="myscene.env.xml" output="screen">
+
+  </node>
+
+
+  <node name="joy_to_rave" pkg="osu_ros_adept" type="joy_to_RAVE.py" respawn="true">
+
+  </node>
+
+  <node name="controller_comm" pkg="osu_ros_adept" type="controller_comm_client.py" respawn="true">
+
+  </node>
+
+  <node name="joysticks" pkg="joy" type="joy_node" respawn="true">
+
+  </node>
+
+</launch>

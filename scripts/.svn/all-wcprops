@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/robotarm/!svn/ver/119/adept_ros/osu_ros_adept/scripts
+END
+controller_comm_client.py
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/robotarm/!svn/ver/134/adept_ros/osu_ros_adept/scripts/controller_comm_client.py
+END
+manual_entry.py
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/robotarm/!svn/ver/119/adept_ros/osu_ros_adept/scripts/manual_entry.py
+END
+controller_feedback_client.py
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/robotarm/!svn/ver/95/adept_ros/osu_ros_adept/scripts/controller_feedback_client.py
+END

@@ -1,0 +1,214 @@
+<KinBody name="trigrip">
+	<Body name="handbase" type="dynamic">
+		<Geom type="trimesh" modifiable="false">
+			<!--<Translation>0.45 .043 0.62</Translation>
+			<RotationMat>0 1 0 -1 0 0 0 0 1</RotationMat>-->
+			<data>models/trigrip/palm.wrl 0.001</data>
+			<Render>models/trigrip/palm.wrl 0.001</Render>
+		</Geom>
+   <!--<Geom type="trimesh" modifiable="false">
+      <Translation>0.0  0.0  0.0915</Translation>
+      <RotationMat>-1 0 0 0 -1 0 0 0 1</RotationMat>
+      <data>models/barrett/link1.iv 0.001</data>
+      <Render>models/barrett/link1.iv 0.001</Render>
+    </Geom> -->
+		<mass type="custom">
+		<!-- cylinder -->
+			<total>1.1</total>
+			<com>0 0 0.04796</com>
+			<inertia>0.000556875 0 0 0 0.000556875 0 0 0 0.00111375</inertia>
+		</mass>
+	</Body>
+
+  <!-- finger 0-->
+	<Body name="Finger0-0" type="dynamic">
+		<offsetfrom>handbase</offsetfrom>
+		<!--<Translation>0.54 0.009 0.60</Translation>-->
+		<Translation>-.034 .09 -0.02</Translation>
+		<!--<RotationMat>0 1 0 -1 0 0 0 0 1</RotationMat>-->
+		<Geom type="trimesh" modifiable="false">
+			<data>models/trigrip/finger1_link1.wrl 0.001</data>
+			<Render>models/trigrip/finger1_link1.wrl 0.001</Render>
+		</Geom>
+		<mass type="custom">
+		<!-- approximate as box -->
+			<total>0.1</total>
+			<com>0.026484 0.000000 -0.007214</com>
+			<inertia>0.000025 0 0 0 0.000069 0 0 0 0.000459</inertia>
+		</mass>
+	</Body>
+	<Body name="Finger0-1" type="dynamic" >
+		<offsetfrom>Finger0-0</offsetfrom>
+		<!-- translation in -y,x,z i don't know why... -->
+		<Translation>-0.12 -.092 -0.047</Translation>
+		<Geom type="trimesh" modifiable="false">
+			<data>models/trigrip/finger1_link2.wrl 0.001</data>
+			<Render>models/trigrip/finger1_link2.wrl 0.001</Render> 
+		</Geom>
+		<mass type="custom">
+		<!-- approximate as box -->
+			<total>0.1</total>
+			<com>0.033500 0.000830 0.000050</com>
+			<inertia>0.000009 0 0 0 0.000074 0 0 0 0.000514</inertia>
+		</mass>
+	</Body>
+	
+	<Joint type="hinge" name="JF1">
+		<Body>Finger0-0</Body>
+		<Body>Finger0-1</Body>
+		<offsetfrom>Finger0-1</offsetfrom>
+		<weight>0.03846</weight>
+		<limitsdeg>0 140</limitsdeg>
+		<axis>0 0 1</axis>
+		<maxvel>2</maxvel>
+		<resolution>4.2</resolution>
+		<maxtorque>4.6875</maxtorque>
+	</Joint>
+<!--
+  <Joint name="JF1mimic" type="hinge" enable="false" mimic_pos="JF1">
+  </Joint>
+-->
+
+
+  <!-- finger 1-->
+	<Body name="Finger1-0" type="dynamic">
+		<offsetfrom>handbase</offsetfrom>
+		<!--<Translation>0.45 0.126 0.551</Translation>-->
+		<Translation>-0.083 0 -0.07</Translation>
+		<RotationMat>0 1 0 -1 0 0 0 0 1</RotationMat>
+		<Geom type="trimesh" modifiable="false">
+			<data>models/trigrip/finger2_link1.wrl 0.001</data>
+			<Render>models/trigrip/finger2_link1.wrl 0.001</Render>
+		</Geom>
+		<mass type="custom">
+		<!-- approximate as box -->
+			<total>0.1</total>
+			<com>0.026484 0.000000 -0.007214</com>
+			<inertia>0.000025 0 0 0 0.000069 0 0 0 0.000459</inertia>
+		</mass>
+	</Body>
+	<Body name="Finger1-1" type="dynamic" >
+		<offsetfrom>Finger1-0</offsetfrom>
+		<Translation>0 0 0</Translation>
+		<RotationMat>0 0 0 0 0 0 0 0 0</RotationMat>
+		<Geom type="trimesh" modifiable="false">
+			<Translation>0 0 0</Translation>
+			<data>models/trigrip/finger2_link2.wrl 0.001</data>
+			<Render>models/trigrip/finger2_link2.wrl 0.001</Render> 
+		</Geom>
+		<mass type="custom">
+		<!-- approximate as box -->
+			<total>0.1</total>
+			<com>0.033500 0.000830 0.000050</com>
+			<inertia>0.000009 0 0 0 0.000074 0 0 0 0.000514</inertia>
+		</mass>
+	</Body>
+	<Joint type="hinge" name="JF2">
+		<Body>Finger1-0</Body>
+		<Body>Finger1-1</Body>
+		<offsetfrom>Finger1-1</offsetfrom>
+		<weight>0.03846</weight>
+		<limitsdeg>0 140</limitsdeg>
+		<axis>0 0 1</axis>
+		<maxvel>2</maxvel>
+		<resolution>4.2</resolution>
+		<maxtorque>4.6875</maxtorque>
+	</Joint>
+
+
+  <!-- finger 2-->
+	<Body name="Finger2-0" type="dynamic" >
+		<offsetfrom>handbase</offsetfrom>
+		<!--<Translation>0.448 0.126 0.553</Translation>-->\
+		<Translation>-.09 -.004 -.07</Translation>    
+		<RotationMat>0 1 0 -1 0 0 0 0 1</RotationMat>
+		<Geom type="trimesh" modifiable="false">
+			<Translation>0 0 0</Translation>
+			<data>models/trigrip/finger3_link1.wrl 0.001</data>
+			<Render>models/trigrip/finger3_link1.wrl 0.001</Render> 
+		</Geom>
+		<mass type="custom">
+		<!-- approximate as box -->
+			<total>0.1</total>
+			<com>0.033500 0.000830 0.000050</com>
+			<inertia>0.000009 0 0 0 0.000074 0 0 0 0.000514</inertia>
+		</mass>
+	</Body>
+	<Body name="Finger2-1" type="dynamic" >
+		<offsetfrom>Finger2-0</offsetfrom>
+		<Translation>0 0 0</Translation>
+		<RotationMat>0 0 0 0 0 0 0 0 0</RotationMat>
+		<Geom type="trimesh" modifiable="false">
+			<Translation>0.001 0.001 0.001</Translation>
+			<data>models/trigrip/finger3_link2.wrl 0.001</data>
+			<Render>models/trigrip/finger3_link2.wrl 0.001</Render> 
+		</Geom>
+		<mass type="custom">
+		<!-- approximate as box -->
+			<total>0.1</total>
+			<com>0.023250 0.000000 0.000100</com>
+			<inertia>0.000007 0 0 0 0.000040 0 0 0 0.000352</inertia>
+		</mass>
+	</Body>
+
+	<Joint name="JF3mimic" type="hinge">
+		<Body>Finger2-0</Body>
+		<Body>Finger2-1</Body>
+		<offsetfrom>Finger2-1</offsetfrom>
+		<weight>0.03846</weight>
+		<limitsdeg>0 97</limitsdeg>
+		<axis>0 0 1</axis>
+		<maxvel>1</maxvel>
+		<resolution>4.2</resolution>
+	</Joint>
+
+
+	<Joint type="hinge" name="JF3">
+		<Body>handbase</Body>
+		<Body>Finger2-0</Body>
+		<offsetfrom>Finger2-0</offsetfrom>
+		<weight>0.03846</weight>
+		<limitsdeg>0 140</limitsdeg>
+		<axis>0 0 1</axis>
+		<maxvel>2</maxvel>
+		<resolution>4.2</resolution>
+		<maxtorque>4.6875</maxtorque>
+	</Joint>
+
+	<!-- spread -->
+	<Joint name="JF4" type="hinge">
+		<Body>handbase</Body>
+		<Body>Finger0-0</Body>
+		<offsetfrom>Finger0-0</offsetfrom>
+		<weight>0.14894</weight>
+		<limitsdeg>-1 181</limitsdeg>
+		<axis>0 0 -1</axis>
+		<!-- <anchor>0.025 0 0</anchor> -->
+		<maxvel>2</maxvel>
+		<resolution>1.7</resolution>
+		<maxtorque>2</maxtorque>
+	</Joint>
+
+	<Joint name="JF4mimic" type="hinge">
+		<Body>handbase</Body>
+		<Body>Finger1-0</Body>
+		<offsetfrom>Finger1-0</offsetfrom>
+		<weight>0.14894</weight>
+		<axis>0 0 1</axis>
+		<!-- <anchor>-0.025 0 0</anchor> -->
+		<maxvel>2</maxvel>
+		<resolution>1.7</resolution>
+		<limitsdeg>-1 181</limitsdeg>
+	</Joint>
+
+
+	<!-- add adjacent links, necessary in order to prevent bogus collisions -->
+	<adjacent>Finger0-0 Finger1-0</adjacent>
+	<adjacent>Finger1-0 Finger2-0</adjacent>
+	<adjacent>handbase Finger0-0</adjacent>
+	<!-- <adjacent>handbase Finger0-1</adjacent> -->
+	<adjacent>handbase Finger1-0</adjacent>
+	<!-- <adjacent>handbase Finger1-1</adjacent> -->
+	<adjacent>handbase Finger2-0</adjacent>
+	<!-- a<adjacent>handbase Finger2-1</adjacent> -->
+</KinBody>

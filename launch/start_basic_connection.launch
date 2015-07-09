@@ -1,0 +1,4 @@
+<launch>
+	<node type = "controller_comm_client.py" name = "adept_controller_comm_client" pkg = "osu_ros_adept" output = "screen" launch-prefix = "xterm -e" />
+	<node type = "manual_entry.py" name = "adept_manual_entry" pkg = "osu_ros_adept" output = "screen" launch-prefix = "xterm -e" />
+</launch>
